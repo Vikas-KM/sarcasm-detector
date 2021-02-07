@@ -62,7 +62,10 @@ testing_labels = np.array(testing_labels)
 model = tf.keras.Sequential(
     [
         tf.keras.layers.Embedding(vocab_size, embedding_dim, input_length=max_length),
+        # If you want to use bi-directional LSTMs / RNNs
+        # comment below line (GlobalAveragePool) and uncomment Bidirectional Line
         tf.keras.layers.GlobalAveragePooling1D(),
+        # tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(embedding_dim)),
         tf.keras.layers.Dense(24, activation='relu'),
         tf.keras.layers.Dense(1, activation='sigmoid'),
     ]
@@ -70,13 +73,15 @@ model = tf.keras.Sequential(
 
 print(model.summary())
 
+# adam = tf.keras.optimizers.Adam(learning_rate=0.00001, beta_1=0.9, beta_2=0.999, amsgrad=False)
+
 model.compile(
     optimizer='adam',
     loss='binary_crossentropy',
     metrics=['accuracy'],
 )
 
-history = model.fit(training_padded, training_labels, epochs=30, validation_data=(testing_padded, testing_labels), verbose=2)
+history = model.fit(training_padded, training_labels, epochs=30, validation_data=(testing_padded, testing_labels), verbose=1)
 
 print(training_padded[1])
 print(training_sentences[1])
